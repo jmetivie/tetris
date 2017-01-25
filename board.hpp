@@ -29,7 +29,7 @@ class Board {
 		inline unsigned int	getValue(unsigned int x, unsigned int y) const { return board[y][x]; }
 		inline void			setValue(unsigned int x, unsigned int y, unsigned int value) { board[y][x] = value; }	
 		
-		bool addPiece(Tetramino& piece);
+		bool addPiece(Tetramino& piece, Position position);
 		
 		
 };
