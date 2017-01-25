@@ -23,17 +23,20 @@ class Tetramino {
 		Tetramino();
 		~Tetramino();
 		
-		virtual bool canRotate() const = 0;
-		virtual void doRotate() = 0;
+		virtual bool canRotate() const {return false;}
+		virtual void doRotate() {};
 		
 		inline string getColor() 	const { return color; }
 		inline unsigned int getId() const { return id; }
+		inline Position getPosition(unsigned int i) const { return positions[i]; }
+		
+		static Tetramino randomTetraminoFactory();
 };
 
 class IPiece : public Tetramino {
 	public:
 		IPiece();
-		~IPiece();
+		~IPiece(){}
 		
 		bool canRotate() const;
 		void doRotate();		
@@ -42,11 +45,57 @@ class IPiece : public Tetramino {
 class JPiece : public Tetramino {
 	public:
 		JPiece();
-		~JPiece();
+		~JPiece(){}
 		
 		bool canRotate() const;
 		void doRotate();		
 };
+
+class LPiece : public Tetramino {
+	public:
+		LPiece();
+		~LPiece(){}
+		
+		bool canRotate() const;
+		void doRotate();		
+};
+
+class OPiece : public Tetramino {
+	public:
+		OPiece();
+		~OPiece(){}
+		
+		bool canRotate() const;
+		void doRotate();		
+};
+
+class SPiece : public Tetramino {
+	public:
+		SPiece();
+		~SPiece(){}
+		
+		bool canRotate() const;
+		void doRotate();		
+};
+
+class ZPiece : public Tetramino {
+	public:
+		ZPiece();
+		~ZPiece(){}
+		
+		bool canRotate() const;
+		void doRotate();		
+};
+
+class TPiece : public Tetramino {
+	public:
+		TPiece();
+		~TPiece(){}
+		
+		bool canRotate() const;
+		void doRotate();		
+};
+
 
 
 #endif

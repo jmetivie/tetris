@@ -30,3 +30,20 @@ Board::display() const {
 		cout << endl;
 	}
 }
+
+bool 
+Board::addPiece(Tetramino& piece) {
+	
+	/*unsigned int min_x = width;
+	unsigned int max_x = 0;
+	unsigned int min_y = height;
+	unsigned int max_y = 0;*/
+	
+	for (unsigned int i = 0 ; i < 4 ; i++) {
+		Position position = piece.getPosition(i);
+		board[position.second][position.first] = piece.getId();
+	}
+	
+	return true;
+	
+}
