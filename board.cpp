@@ -1,10 +1,10 @@
 #include "board.hpp"
 
-Board::Board() : width(1), height(1) {
+Board::Board() : width(0+2), height(1) {
 	init_board();
 }
 
-Board::Board(unsigned int _width, unsigned int _height) : width(_width), height(_height) {
+Board::Board(unsigned int _width, unsigned int _height) : width(_width+2), height(_height+1) {
 	init_board();
 }
 
@@ -17,6 +17,14 @@ void
 Board::init_board() {
 	board.reserve(height);
 	for (unsigned int h = 0 ; h < height ; h++) board.push_back(vector<unsigned int>(width,0));
+	
+	for (unsigned int h = 0 ; h < height ; h++) {
+		board[h][0] 		= 255;
+		board[h][width-1] 	= 255;
+	}
+	for (unsigned int w = 0 ; w < width ; w++) {
+		board[height-1][w] = 255;
+	}
 }
 
 

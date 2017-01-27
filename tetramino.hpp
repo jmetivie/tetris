@@ -34,6 +34,7 @@ class Tetramino {
 		bool doRotate(Board& board);
 		bool canTranslate(Board& board, string direction);
 		bool doTranslate(Board& board,  string direction);
+		bool doFall(Board& board);
 		
 		inline string 			getColor() 	const { return color; }
 		inline unsigned int 	getId() const { return id; }

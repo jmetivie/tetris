@@ -178,6 +178,16 @@ Tetramino::doTranslate(Board& board, string direction) {
 	return false;
 }
 
+
+bool 
+Tetramino::doFall(Board& board) {
+	bool keep_going = true;
+	while (keep_going) {
+		keep_going = doTranslate(board, "down");
+	}
+	return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 IPiece::IPiece() : Tetramino() {
 	id = 1; 
