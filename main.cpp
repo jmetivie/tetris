@@ -4,36 +4,36 @@
 
 using namespace std;
 
-void testIPiece();
+void testPiece();
 
 int main() {
 
-	testIPiece();
-	return 0;
 	
 	Board board(12,24);
+	OPiece o;
+	board.addPiece(o,make_pair(3,5));
+	TPiece t;
+	board.addPiece(t,make_pair(5,3));
 	board.display();
 	
+	cout << "canRotate?" << t.canRotate(board) << endl;
+	t.doRotate(board);
+	board.display();
 	
-	for (int i = 0 ; i < 1 ; i++) {
-		//~ Tetramino t = Tetramino::randomTetraminoFactory();
-		JPiece t;
-		t.doRotate();
-		cout << "Adding piece id:" << t.getId() << endl;
-		Position position = make_pair(5,15);
-		board.addPiece(t, position);
-		board.display();
-	}
+	cout << "canTranslate?" << t.canTranslate(board,"left") << endl;
+	t.doTranslate(board,"left");
+	board.display();
+	
 	return 0;
 }
 
 
-void testIPiece() {
+void testPiece() {
 	TPiece t;
 	for (int angle = 0 ; angle < 5 ; angle++) {
 		Board board(4,4);
 		board.addPiece(t, make_pair(0,0));
 		board.display();
-		t.doRotate();
+		t.doRotate(board);
 	}
 }

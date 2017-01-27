@@ -1,16 +1,27 @@
 #include "tetramino.hpp"
+#include "board.hpp"
 
+////////////////////////////////////////////////////////////////////////
+// TETRAMINOES 
+////////////////////////////////////////////////////////////////////////
+
+// CONSTRUCTORS, DESTRUCTORS, AND FACTORIES ////////////////////////////
+
+/// Default Contructor
 Tetramino::Tetramino() : id(9), color("gray") {
 	positions.reserve(4);
 	angle = 0;
 	referencePosition = make_pair(0,0);
 }
 
+/// DESTRUCTOR
 Tetramino::~Tetramino() {
 	positions.clear();
 	cout << "Tetramino::~Tetramino() | need to be completed." << endl;
 }
 
+/// FACTORY
+/// \return a random tetramino
 Tetramino 
 Tetramino::randomTetraminoFactory() {
 	unsigned int randomId = rand() % 7 + 1;
@@ -28,6 +39,8 @@ Tetramino::randomTetraminoFactory() {
 	}
 }
 
+// POSITION COMPUTATION ////////////////////////////////////////////////
+
 Position 
 Tetramino::computePosition(unsigned int piecePart, Position& position) {
 	//~ cout << "ComputePosition of part " << piecePart << " (" << getPosition(piecePart).first <<  "," << getPosition(piecePart).second<< ") at (" << position.first << "," << position.second << ")" << endl;
@@ -38,6 +51,131 @@ Tetramino::computePosition(unsigned int piecePart, Position& position) {
 	//~ cout << "y = " << position.second << "+" << delta_position.second << " = " << new_y << endl;
 	Position result = make_pair(new_x,new_y);
 	return result;
+}
+
+// MOVEMENT FUNCTIONS //////////////////////////////////////////////////
+
+///This function remove subpieces of a piece without destroying it
+///\param board					the board to impact
+void 
+Tetramino::removeFromBoard(Board& board) {
+	for (unsigned int piece = 0 ; piece < 4 ; piece++) {
+		Position position = computePosition(piece, referencePosition);
+		board.setValue(position.first, position.second, 0);
+	}
+}
+
+///This function "re-add" subpieces of a piece without creating it
+///\param board					the board to impact
+void 
+Tetramino::addToBoard(Board& board) {
+	for (unsigned int piece = 0 ; piece < 4 ; piece++) {
+		Position position = computePosition(piece, referencePosition);
+		board.setValue(position.first, position.second, id);
+	}
+}
+
+bool 
+Tetramino::canRotate(Board& board) {
+	bool isOk = true;
+	
+	removeFromBoard(board);
+	
+	//do hypotetical rotation
+	angle = (angle + 1) % 4;
+	
+	//compute position avalibility
+	for (unsigned int piece = 0 ; piece < 4 ; piece++) {
+		Position futurPosition = computePosition(piece, referencePosition);
+		int value = board.getValue(futurPosition.first, futurPosition.second);
+		//~ cout << futurPosition.first << " " << futurPosition.second << " => " << value << endl;
+		if (value != 0) {
+			isOk = false;
+			break;
+		}
+	}
+	
+	//undo hypotetical rotation
+	angle = (angle - 1) % 4;
+	
+	addToBoard(board);
+	
+	return isOk;
+}
+
+bool
+Tetramino::doRotate(Board& board) {
+	if (canRotate(board)) {
+
+		removeFromBoard(board);
+		
+		//rotate
+		angle = (angle + 1)%4;
+		
+		addToBoard(board);
+		
+		return true;
+	}
+	return false;
+}
+
+bool 
+Tetramino::canTranslate(Board& board, string direction) {
+	bool isOk = true;
+	
+	int deltaX = 0;
+	int deltaY = 0;
+	if (direction == "down")  deltaY =  1;
+	if (direction == "left")  deltaX = -1;
+	if (direction == "right") deltaX =  1;
+	
+	removeFromBoard(board);
+	
+	//do hypotetical translate
+	referencePosition.first  += deltaX;
+	referencePosition.second += deltaY;
+	
+	//compute position avalibility
+	for (unsigned int piece = 0 ; piece < 4 ; piece++) {
+		Position futurPosition = computePosition(piece, referencePosition);
+		int value = board.getValue(futurPosition.first, futurPosition.second);
+		//~ cout << futurPosition.first << " " << futurPosition.second << " => " << value << endl;
+		if (value != 0) {
+			isOk = false;
+			break;
+		}
+	}
+	
+	//undo hypotetical translate
+	referencePosition.first  -= deltaX;
+	referencePosition.second -= deltaY;
+	
+	addToBoard(board);
+	
+	return isOk;
+}
+
+bool
+Tetramino::doTranslate(Board& board, string direction) {
+	if (canTranslate(board, direction)) {
+
+		int deltaX = 0;
+		int deltaY = 0;
+		if (direction == "down")  deltaY =  1;
+		if (direction == "left")  deltaX = -1;
+		if (direction == "right") deltaX =  1;
+	
+		removeFromBoard(board);
+	
+		//translate
+		referencePosition.first  += deltaX;
+		referencePosition.second += deltaY;
+		
+		addToBoard(board);
+		
+		return true;
+	}
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

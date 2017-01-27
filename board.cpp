@@ -22,8 +22,8 @@ Board::init_board() {
 
 void
 Board::display() const {
+	for (int x = 0 ; x < width ; x++) cout << (x%10); cout << endl;
 	for (int y = 0 ; y < height ; y++) {
-		cout << y << "\t "; cout.flush();
 		for (int x = 0 ; x < width ; x++) {
 			int id = getValue(x,y);
 			switch (id) {
@@ -48,8 +48,9 @@ Board::display() const {
 			}
 			
 		}
-		cout << endl;
+		cout << " " << y << endl;
 	}
+	for (int x = 0 ; x < width ; x++) cout << (x%10); cout << endl;
 }
 
 bool 
@@ -70,6 +71,8 @@ Board::addPiece(Tetramino& piece, Position position) {
 		Position position_piece = piece.getPosition(i);
 		board[position_piece.second+position.second][position_piece.first+position.first] = piece.getId();
 	}
+	
+	piece.setReferencePosition(position);
 	
 	return true;
 	
