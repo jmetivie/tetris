@@ -11,7 +11,7 @@ int main() {
 	
 	Board board(12,24);
 	Tetramino t = Tetramino::randomTetraminoFactory();
-	board.addPiece(t, make_pair(6,0));
+	board.addPiece(t, make_pair((board.getWidth()/2-1),0));
 	
 	while(true) {
 		board.display();
@@ -32,11 +32,15 @@ int main() {
 			case 'B':
 				res = t.doTranslate(board, "down");
 				break;
-			case 'F':
+			case 'F': {
 				res = t.doFall(board);
+				list<unsigned int> lines = board.getCompleteLines();
+				cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
+				board.removeLines(lines);
 				t = Tetramino::randomTetraminoFactory();
-				board.addPiece(t, make_pair(6,0));
+				board.addPiece(t, make_pair((board.getWidth()/2-1),0));
 				break;
+			}
 			default : 
 				cout << "oupsy" << endl;
 		}

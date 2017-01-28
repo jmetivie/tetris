@@ -85,3 +85,39 @@ Board::addPiece(Tetramino& piece, Position position) {
 	return true;
 	
 }
+
+list<unsigned int> 
+Board::getCompleteLines() const {
+	list<unsigned int> completeLines;
+	for (unsigned int h = 0 ; h < height-1 ; h++) {
+		bool complete = true;
+		for (unsigned int w = 1; w < width-1 ; w++) {
+			if (getValue(w,h) == 0) {
+				complete = false;
+				break;
+			}
+		}
+		if (complete) completeLines.push_back(h);
+	}
+	return completeLines;
+}
+
+void 				
+Board::removeLines(list<unsigned int>& lines) {
+	for (unsigned int line : lines) {
+		//remove line
+		for (int w = 1 ; w < width-1 ; w++) {
+			setValue(w,line,0);
+		}
+		//make it drop !!!!
+		for (int h = line; h > 0 ; h--) {
+			for (int w = 1 ; w < width-1 ; w++) {
+				setValue(w,h,getValue(w,h-1));
+			}
+		}
+		//complete first line
+		for (int w = 1 ; w < width-1 ; w++) {
+			setValue(w,0,0);
+		}
+	}
+}

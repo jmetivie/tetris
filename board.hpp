@@ -22,7 +22,8 @@ class Board {
 		void init_board();
 		void display() const;
 		
-		list<unsigned int> getCompleteLines() const;		
+		list<unsigned int> 	getCompleteLines() const;
+		void 				removeLines(list<unsigned int>& lines);		
 		
 		inline unsigned int	getWidth() const { return width; }
 		inline unsigned int	getHeight() const { return height; }
