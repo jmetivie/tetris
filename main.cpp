@@ -23,15 +23,26 @@ int main() {
 	}
 	SDL_Window* gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN );
 	
+	board.display();
+	cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
+	
 	bool quit = false;
 	SDL_Event e;
+	unsigned int time_last = time(NULL);
 	while( !quit )  {
+		 
+		 bool res = false;
+		 unsigned int time_new = time(NULL);
+		 if (time_new != time_last) {
+			 res = t.doTranslate(board, "down");
+			 time_last = time_new;
+		 }
+		 
 		 while( SDL_PollEvent( &e ) != 0 ) {
-			board.display();
-			cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
+						
 			if( e.type == SDL_QUIT ) quit = true;
 			if( e.type == SDL_KEYDOWN ) {
-				bool res = false;
+				
 				switch( e.key.keysym.sym ) {
 					case SDLK_UP: {
 						res = t.doRotate(board);
@@ -64,6 +75,11 @@ int main() {
 				 }
 			 }
 		 }
+		 
+		 if (res) {
+			 board.display();
+			cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
+		}
 	}
 
 	return 0;
