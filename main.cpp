@@ -26,6 +26,7 @@ int main() {
 	board.display();
 	cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
 	
+	bool gameover = false;
 	bool quit = false;
 	SDL_Event e;
 	unsigned int time_last = time(NULL);
@@ -66,7 +67,7 @@ int main() {
 						cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
 						board.removeLines(lines);
 						t = Tetramino::randomTetraminoFactory();
-						board.addPiece(t, make_pair((board.getWidth()/2-1),0));
+						gameover = !(board.addPiece(t, make_pair((board.getWidth()/2-1),0)));
 						break;
 					}
 					default:
@@ -80,6 +81,12 @@ int main() {
 			 board.display();
 			cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
 		}
+		if (gameover) {
+			cout << "GAME OVER !!! " << endl;
+			quit = true;
+			return 0;
+		}
+		
 	}
 
 	return 0;

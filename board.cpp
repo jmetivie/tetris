@@ -64,11 +64,7 @@ Board::display() const {
 bool 
 Board::addPiece(Tetramino& piece, Position position) {
 	
-	/*unsigned int min_x = width;
-	unsigned int max_x = 0;
-	unsigned int min_y = height;
-	unsigned int max_y = 0;*/
-	
+	bool allfree = true;
 	cout << "Placing piece " << piece.getId() << " at position " << position.first << "," << position.second << endl;
 	Position position_0 = piece.computePosition(0,position);
 	Position position_1 = piece.computePosition(1,position);
@@ -77,12 +73,15 @@ Board::addPiece(Tetramino& piece, Position position) {
 	
 	for (unsigned int i = 0 ; i < 4 ; i++) {
 		Position position_piece = piece.getPosition(i);
-		board[position_piece.second+position.second][position_piece.first+position.first] = piece.getId();
+		unsigned int x = position_piece.first+position.first;
+		unsigned int y = position_piece.second+position.second;
+		if (getValue(x,y) != 0) allfree = false;
+		board[y][x] = piece.getId();
 	}
 	
 	piece.setReferencePosition(position);
 	
-	return true;
+	return allfree;
 	
 }
 
