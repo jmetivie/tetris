@@ -12,8 +12,7 @@ int main() {
 
 	
 	Board board(12,24);
-	Tetramino t = Tetramino::randomTetraminoFactory();
-	board.addPiece(t, make_pair((board.getWidth()/2-1),0));
+	Tetramino t;
 	
 	//HERE LOOP
 	//Initialize SDL
@@ -28,14 +27,22 @@ int main() {
 	
 	bool gameover = false;
 	bool quit = false;
+	bool stuck = true;
 	SDL_Event e;
 	unsigned int time_last = time(NULL);
 	while( !quit )  {
+		 
+		 if (stuck) {
+			 stuck = false;
+			 t = Tetramino::randomTetraminoFactory();
+			 gameover = !(board.addPiece(t, make_pair((board.getWidth()/2-1),0)));
+		 }
 		 
 		 bool res = false;
 		 unsigned int time_new = time(NULL);
 		 if (time_new != time_last) {
 			 res = t.doTranslate(board, "down");
+			 if (!res) stuck = true;
 			 time_last = time_new;
 		 }
 		 
@@ -59,6 +66,7 @@ int main() {
 					}
 					case SDLK_DOWN: {
 						res = t.doTranslate(board, "down");
+						if (!res) stuck = true;
 						break;
 					}
 					case SDLK_SPACE: {
@@ -66,8 +74,7 @@ int main() {
 						list<unsigned int> lines = board.getCompleteLines();
 						cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
 						board.removeLines(lines);
-						t = Tetramino::randomTetraminoFactory();
-						gameover = !(board.addPiece(t, make_pair((board.getWidth()/2-1),0)));
+						stuck = true;
 						break;
 					}
 					default:
