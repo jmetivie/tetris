@@ -35,6 +35,7 @@ Tetramino::randomTetraminoFactory() {
 		case 7 : return TPiece();
 		default: 
 			cout << "Unknown piece id ["<<randomId <<"]" << endl;
+			return OPiece();
 			break;
 	}
 }
