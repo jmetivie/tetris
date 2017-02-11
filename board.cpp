@@ -68,7 +68,7 @@ Board::addPiece(Tetramino& piece, Position position) {
 	cout << "Placing piece " << piece.getId() << " at position " << position.first << "," << position.second << endl;
 	
 	for (unsigned int i = 0 ; i < 4 ; i++) {
-		piece.computePosition(0,position);
+		piece.computePosition(i,position);
 		Position position_piece = piece.getPosition(i);
 		unsigned int x = position_piece.first+position.first;
 		unsigned int y = position_piece.second+position.second;

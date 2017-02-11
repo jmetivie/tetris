@@ -85,14 +85,13 @@ int main() {
 					}
 					case SDLK_DOWN: {
 						res = t.doTranslate(board, "down");
-						if (!res) stuck = true;
+						if (!res) {
+							stuck = true;
+						} 
 						break;
 					}
 					case SDLK_SPACE: {
 						res = t.doFall(board);
-						list<unsigned int> lines = board.getCompleteLines();
-						cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
-						board.removeLines(lines);
 						stuck = true;
 						break;
 					}
@@ -133,6 +132,11 @@ int main() {
 			return 0;
 		}
 		
+		if (stuck == true) {
+			list<unsigned int> lines = board.getCompleteLines();
+			cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
+			board.removeLines(lines);
+		}
 	}
 
 	//cleaning surfaces 
