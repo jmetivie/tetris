@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -8,15 +9,12 @@
 
 using namespace std;
 
-void testPiece();
+map<int, SDL_Surface*> loadImages();
 
 
-map<int, SDL_Surface*> bitmap_maps;
+
 
 int main() {
-
-	
-
 	
 	Board board(12,24);
 	Tetramino t;
@@ -31,38 +29,40 @@ int main() {
 	SDL_Surface* 	gScreenSurface 	= SDL_GetWindowSurface( gWindow );
 	
 	//loading image
-	bitmap_maps[255] 	= IMG_Load("img/wall.bmp");
-	bitmap_maps[0] 		= IMG_Load("img/black.bmp");
-	bitmap_maps[1] 		= IMG_Load("img/cyan.bmp");
-	bitmap_maps[2] 		= IMG_Load("img/red.bmp");
-	bitmap_maps[3] 		= IMG_Load("img/blue.bmp");
-	bitmap_maps[4] 		= IMG_Load("img/green.bmp");
-	bitmap_maps[5] 		= IMG_Load("img/orange.bmp");
-	bitmap_maps[6] 		= IMG_Load("img/yellow.bmp");
-	bitmap_maps[7] 		= IMG_Load("img/purple.bmp");
+	map<int, SDL_Surface*> bitmap_maps = loadImages();
 	
-	board.display();
 	cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
 	
+	unsigned int nbLines = 0;
+	unsigned int base_speed = 1000;
+	unsigned int speed 		= 1000;
 	bool gameover = false;
 	bool quit = false;
 	bool stuck = true;
 	SDL_Event e;
+	
+	
 	unsigned int time_last = time(NULL);
+	long long int time_ms_last = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+	//cout << "Time in Milliseconds =" <<  chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count() << std::endl;
+
+
+	
+	
 	while( !quit )  {
-		 
-		 if (stuck) {
-			 stuck = false;
-			 t = Tetramino::randomTetraminoFactory();
-			 gameover = !(board.addPiece(t, make_pair((board.getWidth()/2-1),0)));
-		 }
-		 
 		 bool res = false;
-		 unsigned int time_new = time(NULL);
-		 if (time_new != time_last) {
+		 //~ unsigned int time_new = time(NULL);
+		 //~ if (time_new != time_last) {
+			 //~ res = t.doTranslate(board, "down");
+			 //~ if (!res) stuck = true;
+			 //~ time_last = time_new;
+			 //~ 
+		 //~ }
+		long long int time_ms_new = chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count();
+		 if (time_ms_new - time_ms_last >= speed) {	
 			 res = t.doTranslate(board, "down");
 			 if (!res) stuck = true;
-			 time_last = time_new;
+			 time_ms_last = time_ms_new;
 		 }
 		 
 		 while( SDL_PollEvent( &e ) != 0 ) {
@@ -102,11 +102,25 @@ int main() {
 			 }
 		 }
 		 
+		 if (stuck == true) {
+			list<unsigned int> lines = board.getCompleteLines();
+			if (!lines.empty()) { 
+				nbLines += lines.size();
+				board.removeLines(lines);
+				speed = base_speed * pow(0.9,nbLines/10);
+				cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << " #lines:" << nbLines << " speed:" << speed << endl;
+				
+				
+				
+			}
+						
+			 stuck = false;
+			 t = Tetramino::randomTetraminoFactory();
+			 gameover = !(board.addPiece(t, make_pair((board.getWidth()/2-1),0)));
+		}
+		 
 		 if (res) {
-			board.display();
-
-			//SDL_BlitSurface( bitmap_maps["wall"], NULL, gScreenSurface, NULL );
-			
+			//board.display();			
 			for (int y = 0 ; y < board.getHeight() ; y++) {
 				for (int x = 0 ; x < board.getWidth() ; x++) {
 					int value = board.getValue(x,y);
@@ -116,15 +130,9 @@ int main() {
 					}
 				}
 			}
-			SDL_UpdateWindowSurface( gWindow );
-			
-			//SDL_Rect rcDest = { 20, 20, 0, 0 };
-			//SDL_BlitSurface ( bitmap_maps["wall"], NULL, gScreenSurface, &rcDest );
-			//something like SDL_UpdateRect(surface, x_pos, y_pos, image->w, image->h); is missing here
-			//SDL_UpdateWindowSurface( gWindow );
+			SDL_UpdateWindowSurface( gWindow );		 
 			 
-			 
-			cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
+
 		}
 		if (gameover) {
 			cout << "GAME OVER !!! " << endl;
@@ -132,11 +140,7 @@ int main() {
 			return 0;
 		}
 		
-		if (stuck == true) {
-			list<unsigned int> lines = board.getCompleteLines();
-			cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << endl;
-			board.removeLines(lines);
-		}
+		
 	}
 
 	//cleaning surfaces 
@@ -146,12 +150,16 @@ int main() {
 }
 
 
-void testPiece() {
-	TPiece t;
-	for (int angle = 0 ; angle < 5 ; angle++) {
-		Board board(4,4);
-		board.addPiece(t, make_pair(0,0));
-		board.display();
-		t.doRotate(board);
-	}
+map<int, SDL_Surface*> loadImages() {
+	map<int, SDL_Surface*> bitmap_maps;
+	bitmap_maps[255] 	= IMG_Load("img/wall.bmp");
+	bitmap_maps[0] 		= IMG_Load("img/black.bmp");
+	bitmap_maps[1] 		= IMG_Load("img/cyan.bmp");
+	bitmap_maps[2] 		= IMG_Load("img/red.bmp");
+	bitmap_maps[3] 		= IMG_Load("img/blue.bmp");
+	bitmap_maps[4] 		= IMG_Load("img/green.bmp");
+	bitmap_maps[5] 		= IMG_Load("img/orange.bmp");
+	bitmap_maps[6] 		= IMG_Load("img/yellow.bmp");
+	bitmap_maps[7] 		= IMG_Load("img/purple.bmp");
+	return bitmap_maps;
 }
