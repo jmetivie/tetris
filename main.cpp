@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <chrono>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -16,6 +17,8 @@ map<int, SDL_Surface*> loadImages();
 
 int main() {
 	
+	
+	srand(time(NULL));
 	Board board(12,24);
 	Tetramino t;
 	
@@ -32,6 +35,14 @@ int main() {
 	map<int, SDL_Surface*> bitmap_maps = loadImages();
 	
 	cout << "R: UP ARROW | ARROWS:TRANSLATE | SPACE:FALL" << endl;
+	
+	
+	///The score the four possibilities add different scores
+	/// a one-liner:	10  pts
+	/// a two-liner:	20  pts
+	/// a three-liner:	50  pts
+	/// a four-liner: 	100 pts
+	long unsigned int score = 0;
 	
 	unsigned int nbLines = 0;
 	unsigned int base_speed = 1000;
@@ -106,9 +117,17 @@ int main() {
 			list<unsigned int> lines = board.getCompleteLines();
 			if (!lines.empty()) { 
 				nbLines += lines.size();
+				switch (lines.size()) {
+					case 1 : score += 10; break;
+					case 2 : score += 20; break;
+					case 3 : score += 50; break;
+					case 4 : score += 100; break;
+					default : score += 0; break;
+				}
 				board.removeLines(lines);
 				speed = base_speed * pow(0.9,nbLines/10);
 				cout << "Complete: ";for (unsigned int l: lines) cout << l << " "; cout << " #lines:" << nbLines << " speed:" << speed << endl;
+				cout << "Score: " << score << endl;
 				
 				
 				
