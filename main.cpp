@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "board.hpp"
 #include "tetramino.hpp"
 
@@ -14,6 +15,10 @@ map<int, SDL_Surface*> loadImages();
 
 
 void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y,  SDL_Color color, TTF_Font* font);
+
+//!TODO! next piece
+//!TODO! sound on movement?, rotation?, line completed?
+//!TODO! clean code 
 
 int main() {
 	
@@ -29,6 +34,13 @@ int main() {
 		return 1;
 	}
 	TTF_Init();
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) printf("%s", Mix_GetError());
+
+	Mix_Music* music = Mix_LoadMUS("music.mp3");
+	Mix_PlayMusic(music, -1);
+	
+	
 	SDL_Window* 	gWindow 		= SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 720, 800, SDL_WINDOW_SHOWN );
 	SDL_Surface* 	gScreenSurface 	= SDL_GetWindowSurface( gWindow );
 	
@@ -178,6 +190,9 @@ int main() {
 	//cleaning surfaces 
 	for (pair<int,SDL_Surface*> current: bitmap_maps) SDL_FreeSurface( current.second );
 
+	Mix_FreeMusic(music);
+	Mix_CloseAudio();
+
 	return 0;
 }
 
@@ -196,9 +211,8 @@ map<int, SDL_Surface*> loadImages() {
 	return bitmap_maps;
 }
 
-void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y, SDL_Color color, TTF_Font* font) {
-	
+void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y, SDL_Color color, TTF_Font* font) {	
 	SDL_Surface* 	textSurface		= TTF_RenderText_Solid( font, text.c_str(), color );
-	SDL_Rect 		rcText 			= { x, y, 0, 0 };
+	SDL_Rect 		rcText 			= { int(x), int(y), 0, 0 };
 	SDL_BlitSurface( textSurface, NULL, displaySurface, &rcText );
 }
