@@ -4,7 +4,7 @@
 #include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-
+#include <SDL2/SDL_ttf.h>
 #include "board.hpp"
 #include "tetramino.hpp"
 
@@ -13,7 +13,7 @@ using namespace std;
 map<int, SDL_Surface*> loadImages();
 
 
-
+void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y,  SDL_Color color, TTF_Font* font);
 
 int main() {
 	
@@ -28,7 +28,8 @@ int main() {
 		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
 		return 1;
 	}
-	SDL_Window* 	gWindow 		= SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 800, SDL_WINDOW_SHOWN );
+	TTF_Init();
+	SDL_Window* 	gWindow 		= SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 720, 800, SDL_WINDOW_SHOWN );
 	SDL_Surface* 	gScreenSurface 	= SDL_GetWindowSurface( gWindow );
 	
 	//loading image
@@ -58,8 +59,6 @@ int main() {
 	//cout << "Time in Milliseconds =" <<  chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now().time_since_epoch()).count() << std::endl;
 
 
-	
-	
 	while( !quit )  {
 		 bool res = false;
 		 //~ unsigned int time_new = time(NULL);
@@ -139,11 +138,25 @@ int main() {
 		}
 		 
 		 if (res) {
-			//board.display();			
+			//board.display();	
+			SDL_FillRect(gScreenSurface,NULL, 0x000000); 
+			
+			TTF_Font *gFont = TTF_OpenFont( "Carlito-Bold.ttf", 28 );	
+			SDL_Color textColor1 = { 255, 0, 0 };
+			SDL_Color textColor2 = { 255, 127, 0 };
+			
+			//void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y, SDL_Color color, TTF_Font* font)
+			displayText("Score:", gScreenSurface, 500, 200, textColor1, gFont);
+			displayText(to_string(score), gScreenSurface, 500, 225, textColor2, gFont);
+			displayText("Number of lines:", gScreenSurface, 500, 300, textColor1, gFont);
+			displayText(to_string(nbLines), gScreenSurface, 500, 325, textColor2, gFont);
+			
+			
+					
 			for (int y = 0 ; y < board.getHeight() ; y++) {
 				for (int x = 0 ; x < board.getWidth() ; x++) {
 					int value = board.getValue(x,y);
-					if (value == 255 || (value >= 0 && value < 8)) {
+					if (value == 255 || (value > 0 && value < 8)) {
 						SDL_Rect rcDest = { 30*(x+1), 30*(y+1), 0, 0 };
 						SDL_BlitSurface ( bitmap_maps[value], NULL, gScreenSurface, &rcDest );
 					}
@@ -181,4 +194,11 @@ map<int, SDL_Surface*> loadImages() {
 	bitmap_maps[6] 		= IMG_Load("img/yellow.bmp");
 	bitmap_maps[7] 		= IMG_Load("img/purple.bmp");
 	return bitmap_maps;
+}
+
+void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y, SDL_Color color, TTF_Font* font) {
+	
+	SDL_Surface* 	textSurface		= TTF_RenderText_Solid( font, text.c_str(), color );
+	SDL_Rect 		rcText 			= { x, y, 0, 0 };
+	SDL_BlitSurface( textSurface, NULL, displaySurface, &rcText );
 }

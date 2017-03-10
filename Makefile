@@ -12,7 +12,7 @@ main.o: tetramino.o board.o main.cpp
 	g++ main.cpp $(CFLAG)
 
 tetris: tetramino.o board.o main.o
-	g++ *.o -o tetris -lSDL2 -lSDL2_image 
+	g++ *.o -o tetris -lSDL2 -lSDL2_image -lSDL2_ttf
 
 clean: 
 	rm tetris
