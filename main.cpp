@@ -15,6 +15,7 @@ map<int, SDL_Surface*> loadImages();
 
 
 void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsigned int y,  SDL_Color color, TTF_Font* font);
+void playSound(string filename, int nbLoop = -1);
 
 //!TODO! next piece
 //!TODO! sound on movement?, rotation?, line completed?
@@ -215,4 +216,10 @@ void displayText(string text, SDL_Surface* 	displaySurface, unsigned int x, unsi
 	SDL_Surface* 	textSurface		= TTF_RenderText_Solid( font, text.c_str(), color );
 	SDL_Rect 		rcText 			= { int(x), int(y), 0, 0 };
 	SDL_BlitSurface( textSurface, NULL, displaySurface, &rcText );
+}
+
+
+void playSound(string filename, int nbLoop) {
+	Mix_Music* music = Mix_LoadMUS(filename.c_str());
+	Mix_PlayMusic(music, nbLoop);
 }
